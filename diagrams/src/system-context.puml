@@ -10,18 +10,20 @@ actor "Student" as student
 actor "Teacher" as teacher
 actor "Schedule\nAdministrator" as admin
 
-rectangle "Class Schedule\nManagement System\n\n[Web application:\nReact UI + FastAPI + PostgreSQL]" as css #E8F0FE
+rectangle "Class Schedule\nManagement System\n\n[Web application:\nReact UI + FastAPI + PostgreSQL\n+ CP-SAT timetable generator]" as css #E8F0FE
 
 rectangle "Personal calendar apps\n(Google Calendar, Outlook)\n[External]" as cal #F3F3F3
 rectangle "E-mail service (SMTP)\n[External, optional]" as mail #F3F3F3
 rectangle "Spreadsheet files\n(CSV / Excel)\n[Existing data source]" as xls #F3F3F3
+rectangle "LLM provider\n(cloud API or self-hosted model)\n[External, AI assistant]" as llm #FFF4E5
 rectangle "Other university services\n(LMS, portals)\n[Future API consumers]" as ext #F3F3F3
 
 student --> css : views group schedule,\nsearches, exports .ics
 teacher --> css : views personal schedule,\nfinds free rooms
-admin --> css : manages reference data\nand schedule entries
+admin --> css : enters teaching load and constraints,\ngenerates, reviews, edits\nand publishes the timetable
 css --> cal : iCalendar (.ics) export / feed
 css --> mail : change notifications
 xls --> css : import of initial data
 ext --> css : read-only REST API
+css --> llm : constraint text -> structured\nconstraints (JSON), explanations
 @enduml
