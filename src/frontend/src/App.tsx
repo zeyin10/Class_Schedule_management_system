@@ -4,6 +4,8 @@ import { RequireRole } from './auth/AuthContext'
 import { Layout } from './components/Layout'
 import { AdminEntriesPage } from './pages/AdminEntriesPage'
 import { FreeRoomsPage } from './pages/FreeRoomsPage'
+import { GenerationPage } from './pages/GenerationPage'
+import { LoadPage } from './pages/LoadPage'
 import { LoginPage } from './pages/LoginPage'
 import { MySchedulePage } from './pages/MySchedulePage'
 import { SchedulePage } from './pages/SchedulePage'
@@ -46,6 +48,22 @@ export function App() {
           element={
             <RequireRole roles={['admin']}>
               <AdminEntriesPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="admin/load"
+          element={
+            <RequireRole roles={['admin']}>
+              <LoadPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="admin/generate"
+          element={
+            <RequireRole roles={['admin']}>
+              <GenerationPage />
             </RequireRole>
           }
         />

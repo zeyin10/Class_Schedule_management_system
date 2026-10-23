@@ -38,3 +38,7 @@ src/
 | `/my` | student, teacher | FR-12 |
 | `/rooms/free` | teacher, admin | FR-13 |
 | `/admin` | admin | FR-07, FR-08, FR-09 |
+| `/admin/load` | admin | FR-23, FR-24, FR-31 (AI assistant) |
+| `/admin/generate` | admin | FR-25 – FR-28, FR-30, FR-32 |
+
+In the mock, generation uses a greedy algorithm (`src/lib/generator.ts`) and the AI assistant is a keyword matcher (`src/api/mockAssistant.ts`); the real backend uses CP-SAT and an LLM with the same API.

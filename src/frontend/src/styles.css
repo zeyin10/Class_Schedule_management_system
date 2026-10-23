@@ -15,6 +15,8 @@
   --warning: #8a5a00;
   --success-bg: #e8f6ee;
   --success: #17663a;
+  --ai: #6b3fc4;
+  --ai-bg: #f2edfc;
   --radius: 10px;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color: var(--text);
@@ -39,6 +41,8 @@
     --warning: #ffcc66;
     --success-bg: #12301f;
     --success: #7ddba3;
+    --ai: #b79cff;
+    --ai-bg: #261d3d;
   }
 }
 
@@ -592,6 +596,186 @@ a {
   align-items: center;
 }
 
+/* ---------- teaching load, AI assistant, generation ---------- */
+.field textarea {
+  font: inherit;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  resize: vertical;
+}
+
+.ai-mark {
+  color: var(--ai);
+}
+
+.assistant {
+  border-color: var(--ai);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.assistant h2 {
+  margin: 0;
+}
+
+.assistant > p {
+  margin: 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.chip {
+  font: inherit;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 2px 10px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.proposal {
+  background: var(--ai-bg);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.proposal p {
+  margin: 0;
+}
+
+.proposal__label {
+  font-size: 0.8rem;
+  color: var(--ai);
+  font-weight: 600;
+}
+
+.proposal__text {
+  font-weight: 600;
+}
+
+.explanation__text {
+  white-space: pre-line;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge--hard {
+  color: var(--error);
+}
+
+.rules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.rule {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.rule:last-child {
+  border-bottom: 0;
+}
+
+.rule__source {
+  font-size: 0.85rem;
+  margin-top: 2px;
+}
+
+.weights {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px 20px;
+}
+
+.weights legend {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.weight {
+  display: grid;
+  grid-template-columns: 1fr 120px 20px;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.weight input {
+  width: 100%;
+  accent-color: var(--primary);
+}
+
+progress {
+  width: 100%;
+  height: 10px;
+  accent-color: var(--primary);
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.tile {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.tile dt {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.tile dd {
+  margin: 2px 0 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.tile--ok dd {
+  color: var(--success);
+}
+
+.tile--bad dd {
+  color: var(--error);
+}
+
 /* ---------- phones (NFR-05) ---------- */
 @media (max-width: 760px) {
   .grid--desktop {
@@ -629,6 +813,22 @@ a {
     gap: 8px;
     border: 0;
     padding: 2px 0;
+  }
+
+  .weight {
+    grid-template-columns: 1fr 100px 20px;
+  }
+
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tile dd {
+    font-size: 1.2rem;
+  }
+
+  .rule {
+    flex-direction: column;
   }
 
   .entries td[data-label]::before {

@@ -6,7 +6,9 @@
     "freeRooms": "Free rooms",
     "admin": "Schedule editor",
     "login": "Log in",
-    "logout": "Log out"
+    "logout": "Log out",
+    "load": "Load & constraints",
+    "generate": "Generation"
   },
   "roles": { "student": "Student", "teacher": "Teacher", "admin": "Administrator" },
   "login": {
@@ -99,5 +101,86 @@
     "notFound": "Page not found",
     "back": "Go to schedule",
     "students": "students"
+  },
+  "constraint": {
+    "unavailable": "{{teacher}} is unavailable: {{when}}",
+    "prefer": "{{teacher}} prefers to teach: {{when}}",
+    "avoid": "{{teacher}} would rather not teach: {{when}}",
+    "groupMax": "{{group}}: no more than {{max}} lessons a day",
+    "everyDay": "every day",
+    "allDay": "all day",
+    "hard": "hard",
+    "soft": "wish"
+  },
+  "assistant": {
+    "title": "AI assistant",
+    "hint": "Write a constraint or a wish in Kazakh, Russian or English. The assistant turns it into a rule for the generator; nothing is saved until you confirm it.",
+    "label": "Constraint in plain language",
+    "placeholder": "e.g. Omarov cannot teach on Friday afternoon",
+    "examples": "Examples",
+    "example1": "Omarov cannot teach on Friday afternoon",
+    "example2": "Бекова предпочитает вести пары утром",
+    "example3": "SE-2431 тобында күніне 3 сабақтан артық емес",
+    "recognise": "Recognise",
+    "thinking": "Thinking…",
+    "understood": "The assistant understood:",
+    "check": "Check the teacher, day and time. AI can make mistakes, so the rule is saved only after your confirmation.",
+    "confirm": "Confirm and save",
+    "discard": "Discard",
+    "saved": "Rule saved. It will be used in the next generation.",
+    "unknownName": "\"{{name}}\" was not found among teachers or groups. Check the spelling: the assistant does not guess names.",
+    "notUnderstood": "The assistant could not understand this. Try a simpler sentence: who, which day, what time."
+  },
+  "load": {
+    "title": "Teaching load and constraints",
+    "constraints": "Constraints and wishes ({{count}})",
+    "noConstraints": "No constraints yet",
+    "loadTitle": "Teaching load",
+    "total": "Lessons per week: {{count}}",
+    "perWeek": "Per week"
+  },
+  "generate": {
+    "title": "Timetable generation",
+    "intro": "The generator places all lessons of the teaching load without teacher, room or group conflicts and tries to satisfy the wishes. The result is a draft: check it, then publish.",
+    "scope": "Scope",
+    "wholeUniversity": "Whole university",
+    "timeLimit": "Time limit",
+    "seconds": "{{count}} s",
+    "minutes": "{{count}} min",
+    "weights": "Importance of wishes (0 = ignore, 5 = very important)",
+    "weight": {
+      "gaps": "Few gaps for groups",
+      "preferences": "Teacher wishes",
+      "daily_load": "Max 4 lessons a day",
+      "last_slot": "Avoid the last slot"
+    },
+    "start": "Generate",
+    "progress": "Progress",
+    "status": {
+      "queued": "Waiting in the queue…",
+      "running": "The generator is searching for a timetable…"
+    },
+    "infeasible": "A timetable that satisfies all hard constraints does not exist:",
+    "reason": {
+      "teacher": "{{teacher}} must teach {{required}} lessons but is available in only {{available}} slots",
+      "group": "Group {{group}} has {{required}} lessons, but only {{available}} fit into its daily limit",
+      "room": "No suitable room for {{lesson}} ({{students}} students)",
+      "unplaced": "{{lesson}} cannot be placed without a conflict"
+    },
+    "explain": "Explain (AI)",
+    "explanationTitle": "AI explanation (based only on the generator report)",
+    "draftTitle": "Draft timetable",
+    "publish": "Publish",
+    "published": "Published: everyone now sees the new timetable",
+    "report": "Quality report",
+    "metric": {
+      "placed": "Lessons placed",
+      "hard": "Hard-constraint violations",
+      "gaps": "Gaps in group days",
+      "preferences": "Lessons outside wishes",
+      "overloaded": "Days over the limit",
+      "penalty": "Total penalty"
+    },
+    "preview": "Show group"
   }
 }
