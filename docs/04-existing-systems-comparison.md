@@ -48,7 +48,7 @@ We use **9 criteria** (the committee asks for 6–10). Each one comes from a req
 | C1 | **Deployment model** | Desktop application, web application, SaaS cloud, or a mix. | Students and teachers need access from any device without installing anything. Schedulers need a shared central copy, not files on one PC. |
 | C2 | **Self-hosting & data ownership** | Can the university run it on its own servers and keep the database? | Universities in Kazakhstan often prefer to keep student data on their own infrastructure. A self-hosted database also allows direct integration. |
 | C3 | **Licensing & cost** | Licence type, public price, free trial. | Budget is limited. Hidden or high prices make adoption hard. |
-| C4 | **Automatic generation** | Can the system build a timetable automatically from constraints? | Saves scheduler time. For our project this is only a *stretch goal*. |
+| C4 | **Automatic generation** | Can the system build a timetable automatically from constraints? | Saves scheduler time. For our project this is a core feature (supervisor feedback, `11`, #1). |
 | C5 | **Conflict detection during manual edits** | When a scheduler moves or changes a class by hand, does the system detect teacher/room/group double-booking? | In practice most changes after the semester starts are manual. Conflicts that go unnoticed cause real double-bookings. |
 | C6 | **Role-based access & self-service views** | Separate roles (student/teacher/admin), personal timetable views. | Students and teachers should see *their own* schedule. Only admins may edit. |
 | C7 | **Mobile access** | Mobile app or a web UI documented as mobile-friendly. | Students mostly check the schedule on their phones. |
@@ -100,7 +100,7 @@ Legend: **✔** supported (documented) · **◐** partial / with limitations · 
 
 ### 5.1 Strengths of existing systems
 
-- **Automatic generation is a solved, mature feature.** All five systems have it (C4). aSc, FET and Untis are built around it. Our project cannot and should not try to beat them here.
+- **Automatic generation is a mature feature.** All five systems have it (C4). aSc, FET and Untis are built around it. This confirms that generation is expected by users; our project does not try to beat these generators on solution quality, but to combine generation with the other criteria (Section 5.3).
 - **Commercial products cover the full workflow.** Untis/WebUntis and CELCAT combine planning, publishing, mobile access and calendar feeds (C1, C6, C7, C8).
 - **UniTime shows that an open-source web system can work at university scale.** It provides roles, personal schedules, iCal and an export API (C6, C8) under a free licence.
 
@@ -118,9 +118,12 @@ No single system that we reviewed combines **all** of the following:
 **(a)** a free, lightweight, self-hosted web application,
 **(b)** a Kazakh/Russian interface,
 **(c)** a documented open REST API with iCal export, and
-**(d)** conflict prevention that cannot be bypassed when the timetable is edited by hand.
+**(d)** conflict prevention that cannot be bypassed when the timetable is edited by hand, and
+**(e)** automatic generation in the same web system, so that generated and hand-edited timetables pass the same checks.
 
-UniTime comes closest on (a)(c)(d) but fails (b) and is heavy. The commercial tools cover more features but fail (a). FET fails almost everything except generation.
+UniTime comes closest on (a)(c)(d)(e) but fails (b) and is heavy. The commercial tools cover more features but fail (a). FET fails almost everything except generation.
+
+In the documentation we reviewed ([S1]–[S22]) we did not find a way to enter constraints in natural language; constraints are entered through forms and dialogs. We did not test the products ourselves, so this describes the documentation, not a confirmed absence of the feature.
 
 ---
 
@@ -137,6 +140,8 @@ UniTime comes closest on (a)(c)(d) but fails (b) and is heavy. The commercial to
 
 | Our design decision | Gap it addresses (Section 5.2) |
 |---------------------|--------------------------------|
+| **Automatic generation of the whole university timetable inside the web system** (CP-SAT), with the result saved as a draft and checked by the same conflict rules as manual edits | Section 5.3 (e); FET generates only on the desktop, without web access or roles |
+| **AI assistant for constraints in natural language** (KZ/RU/EN), restricted to a validated schema and confirmed by the administrator | Section 5.3: not found in the reviewed documentation; lowers the modelling barrier described in `03`, [21], [22] |
 | **Conflict prevention at the database level** (PostgreSQL constraints on teacher/room/group + time slot), plus friendly checks in the API and UI. An invalid timetable entry cannot be saved, even through the API. | Gap 4: UI-level warnings that can be bypassed or arrive after the edit |
 | **Lightweight, self-hosted web stack** (PostgreSQL + FastAPI + React), deployable on one university server | Gaps 2, 3: heavy open-source alternative; costly or vendor-hosted commercial tools |
 | **Open, documented REST API** (OpenAPI/Swagger generated by FastAPI) + **iCal and PDF export** | Gap 5: closed or undocumented APIs |
@@ -146,10 +151,10 @@ UniTime comes closest on (a)(c)(d) but fails (b) and is heavy. The commercial to
 
 ### 6.3 What we deliberately do not compete on
 
-- **Automatic generation.** aSc, FET, Untis, UniTime and CELCAT all have mature generators (C4). For us this is an *optional stretch goal*. If time allows, we would add a simple generator or a feasibility check. We do not claim it will be comparable.
+- **Generator quality against mature products.** aSc, FET, Untis, UniTime and CELCAT all have mature generators (C4), developed over many years. We build our own generator on CP-SAT, but we do not claim it will produce better timetables than these products; we compare it with a greedy baseline and with the manual process (`09`).
 - **Full university management** (exams, attendance, enrolment, as in CELCAT and UniTime). This is out of scope.
 
-**Conclusion.** The proposed system is not a "better aSc" or a "smaller CELCAT". Its value is narrower and, according to the evidence above, not covered by any single existing system: a **free, self-hosted, localized (KZ/RU) web system for storing, publishing and safely editing a university timetable, with database-enforced conflict prevention and an open REST API**.
+**Conclusion.** The proposed system is not a "better aSc" or a "smaller CELCAT". Its value is narrower and, according to the evidence above, not covered by any single existing system: a **free, self-hosted, localized (KZ/RU) web system that generates the university timetable with AI, lets administrators state constraints in natural language, and stores, publishes and safely edits the timetable with database-enforced conflict prevention and an open REST API**.
 
 ---
 

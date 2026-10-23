@@ -27,6 +27,11 @@ rectangle "Class Schedule Management System" {
   usecase "View change history" as UC12
   usecase "Import data from CSV/Excel" as UC13
   usecase "Suggest conflict-free options" as UC14
+  usecase "Manage teaching load\nand teacher availability" as UC16
+  usecase "Enter constraints in\nnatural language (AI assistant)" as UC17
+  usecase "Generate timetable\n(whole university / faculty)" as UC18
+  usecase "Review, edit and\npublish draft timetable" as UC19
+  usecase "Explain generation result\n(AI assistant)" as UC20
   usecase "Read schedule via REST API" as UC15
 }
 
@@ -46,10 +51,18 @@ admin --> UC08
 admin --> UC09
 admin --> UC12
 admin --> UC13
+admin --> UC16
+admin --> UC18
+admin --> UC19
 ext --> UC15
 
 UC09 ..> UC10 : <<include>>
 UC09 ..> UC11 : <<include>>
 UC14 ..> UC09 : <<extend>>
 UC13 ..> UC10 : <<include>>
+UC17 ..> UC16 : <<extend>>
+UC18 ..> UC10 : <<include>>
+UC18 ..> UC11 : <<include>>
+UC20 ..> UC18 : <<extend>>
+UC19 ..> UC09 : <<include>>
 @enduml

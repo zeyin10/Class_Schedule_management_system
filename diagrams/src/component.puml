@@ -9,6 +9,8 @@ package "Frontend — React + TypeScript (SPA)" as FE {
   [Search & Filters] as fe_search
   [Admin Editor\n(entries + conflict feedback)] as fe_admin
   [Reference Data Management] as fe_ref
+  [Teaching Load & Constraints\n+ AI Assistant chat] as fe_load
+  [Generation & Draft Review\n(progress, quality report,\npublish)] as fe_gen
   [API Client\n(generated from OpenAPI,\nTanStack Query)] as fe_api
 }
 
@@ -21,18 +23,30 @@ package "Backend — FastAPI (Python)" as BE {
   [Audit Log Service] as be_audit
   [Export Service (iCal)] as be_ical
   [Import Service (CSV/Excel)] as be_import
-  [Suggestion Engine\n(stretch: OR-Tools)] as be_sugg #EEEEEE
+  [Suggestion Engine\n(free options for one lesson)] as be_sugg
+  [Generation Service\n(jobs, drafts, publish)] as be_gen
+  [Constraint Assistant\n(LLM client, JSON-schema\nvalidation)] as be_ai #FFF4E5
   [Data Access Layer\n(SQLAlchemy, Alembic)] as be_dal
+}
+
+package "Generation Worker — Python process" as WK {
+  [Pre-checks\n(overloaded resources)] as wk_pre
+  [CP-SAT Model Builder\n& Solver (OR-Tools),\nfaculty decomposition] as wk_cp #E8F0FE
+  [Greedy Baseline\nGenerator] as wk_greedy
+  [Independent Validator\n(Conflict Checker rules)] as wk_val
 }
 
 database "PostgreSQL 16\n(range types,\nEXCLUDE constraints)" as db
 cloud "SMTP\n(optional)" as smtp
+cloud "LLM provider\n(cloud API or\nself-hosted)" as llm
 
 fe_auth --> fe_api
 fe_views --> fe_api
 fe_search --> fe_api
 fe_admin --> fe_api
 fe_ref --> fe_api
+fe_load --> fe_api
+fe_gen --> fe_api
 fe_api --> be_api : HTTPS / JSON (REST)
 
 be_api --> be_auth
@@ -43,6 +57,16 @@ be_api --> be_import
 be_sched --> be_conf
 be_sched --> be_audit
 be_sched ..> be_sugg
+be_api --> be_gen
+be_api --> be_ai
+be_ai --> llm : HTTPS, JSON schema
+be_ai --> be_ref : resolve names
+be_gen --> be_dal : jobs, drafts
+be_gen --> be_conf : publish check
+wk_pre --> wk_cp
+wk_cp --> wk_val
+wk_greedy --> wk_val
+WK --> db : reads load, writes draft\n(job queue in PostgreSQL)
 be_import --> be_conf
 be_ref --> be_dal
 be_sched --> be_dal

@@ -1,6 +1,6 @@
 @startuml er-diagram
 !theme plain
-title ER Diagram (draft) — Class Schedule Management System
+title ER Diagram (draft, v0.2) — Class Schedule Management System
 hide circle
 skinparam linetype ortho
 
@@ -61,10 +61,67 @@ entity "time_slot" as ts {
   *start_time : time
   *end_time : time
 }
-entity "schedule_entry" as se {
+entity "timetable" as tt {
   *id : bigint <<PK>>
   --
   *term_id : bigint <<FK>>
+  *status : enum(draft, published, archived)
+  generation_run_id : bigint <<FK>>
+  published_at : timestamptz
+}
+entity "teaching_load" as tl {
+  *id : bigint <<PK>>
+  --
+  *term_id : bigint <<FK>>
+  *course_id : bigint <<FK>>
+  *teacher_id : bigint <<FK>>
+  *lesson_type : enum(lecture, practice, lab)
+  *lessons_per_week : smallint
+  *week_pattern : enum(every, odd, even)
+  required_room_type : enum
+}
+entity "teaching_load_group" as tlg {
+  *load_id : bigint <<PK, FK>>
+  *group_id : bigint <<PK, FK>>
+}
+entity "teacher_availability" as ta {
+  *id : bigint <<PK>>
+  --
+  *teacher_id : bigint <<FK>>
+  *weekday : smallint
+  *time_slot_id : bigint <<FK>>
+  *kind : enum(unavailable, preferred, avoid)
+  weight : smallint
+}
+entity "constraint_rule" as cr {
+  *id : bigint <<PK>>
+  --
+  *term_id : bigint <<FK>>
+  *rule_type : varchar
+  *params : jsonb
+  *is_hard : bool
+  weight : smallint
+  source_text : text (AI assistant input)
+  confirmed_by : bigint <<FK>>
+}
+entity "generation_run" as gr {
+  *id : bigint <<PK>>
+  --
+  *term_id : bigint <<FK>>
+  *scope : jsonb (university / faculty / groups)
+  *method : enum(cp_sat, greedy)
+  *status : enum(queued, running, done, infeasible, failed)
+  *params : jsonb (weights, time limit, seed)
+  metrics : jsonb (penalties, run time)
+  report : jsonb (infeasibility, changes)
+  started_by : bigint <<FK>>
+}
+entity "schedule_entry" as se {
+  *id : bigint <<PK>>
+  --
+  *timetable_id : bigint <<FK>>
+  load_id : bigint <<FK>>
+  *locked : bool
   *course_id : bigint <<FK>>
   *teacher_id : bigint <<FK>>
   *room_id : bigint <<FK>>
@@ -81,7 +138,7 @@ entity "schedule_entry_group" as seg {
   *entry_id : bigint <<PK, FK>>
   *group_id : bigint <<PK, FK>>
   --
-  *term_id, weekday, period, week_parity\n(copied for group EXCLUDE)
+  *timetable_id, weekday, period, week_parity\n(copied for group EXCLUDE)
 }
 entity "audit_log" as al {
   *id : bigint <<PK>>
@@ -96,7 +153,19 @@ entity "audit_log" as al {
 
 dep ||--o{ grp
 dep ||--o{ t
-term ||--o{ se
+term ||--o{ tt
+tt ||--o{ se
+term ||--o{ tl
+tl ||--|{ tlg
+grp ||--o{ tlg
+c ||--o{ tl
+t ||--o{ tl
+tl ||--o{ se
+t ||--o{ ta
+ts ||--o{ ta
+term ||--o{ cr
+term ||--o{ gr
+gr |o--o| tt
 c ||--o{ se
 t ||--o{ se
 r ||--o{ se
@@ -110,7 +179,7 @@ user ||--o{ al
 
 note bottom of se
   Conflict prevention (PostgreSQL, btree_gist + intarray):
-  EXCLUDE USING gist (term_id WITH =, teacher_id WITH =,
+  EXCLUDE USING gist (timetable_id WITH =, teacher_id WITH =,
     weekday WITH =, period WITH &&, week_parity WITH &&)
   — and same for room_id;
   group conflicts enforced on schedule_entry_group.

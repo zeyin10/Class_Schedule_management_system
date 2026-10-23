@@ -26,7 +26,7 @@ Scoring: 1 (poor) – 5 (excellent). Weights reflect importance for this project
 
 ## Decision 2. Backend platform
 
-**Driving requirements:** FR-14 (REST API with documentation), NFR-04 (security/RBAC), NFR-07 (maintainability, test coverage), schedule of the project (one backend developer, limited time), stretch goal (constraint-solver-based suggestions).
+**Driving requirements:** FR-14 (REST API with documentation), NFR-04 (security/RBAC), NFR-07 (maintainability, test coverage), schedule of the project (one backend developer, limited time), FR-25 – FR-31 (timetable generation with a constraint solver, LLM assistant).
 
 | Criterion | Weight | FastAPI (Python 3.12) | Spring Boot (Java 21) | NestJS (Node.js / TypeScript) |
 |---|---|---|---|---|
@@ -35,11 +35,11 @@ Scoring: 1 (poor) – 5 (excellent). Weights reflect importance for this project
 | Performance for expected load (≤ a few thousand users) | 10% | 4 (async, ASGI) | 5 | 4 |
 | Team experience | 15% | 4 | 3 | 3 |
 | Testing support (pytest, test client) | 10% | 5 | 5 | 4 |
-| Ecosystem for the stretch goal (Google OR-Tools CP-SAT, data processing) | 15% | **5** — first-class Python API | 4 (Java API exists) | 2 (no official bindings) |
+| Ecosystem for generation and AI (Google OR-Tools CP-SAT, LLM SDKs, data processing) | 15% | **5** — first-class Python API | 4 (Java API exists) | 2 (no official bindings) |
 | ORM / migrations for PostgreSQL | 10% | 5 (SQLAlchemy 2, Alembic) | 5 (JPA/Hibernate, Flyway) | 4 (TypeORM/Prisma) |
 | **Weighted score** | | **4.75** | **3.95** | **3.55** |
 
-**Decision: FastAPI.** It produces an OpenAPI contract automatically, which is the integration point with the frontend; it allows fast iteration for a one-person backend; and Python gives direct access to OR-Tools if the automatic-suggestion stretch goal is implemented. Spring Boot is a strong alternative for large enterprise systems but adds overhead that is not justified by the expected load.
+**Decision: FastAPI.** It produces an OpenAPI contract automatically, which is the integration point with the frontend; it allows fast iteration for a one-person backend; and Python gives direct access to OR-Tools for the generator and to the official SDKs of LLM providers. Spring Boot is a strong alternative for large enterprise systems but adds overhead that is not justified by the expected load.
 
 ---
 
@@ -103,6 +103,41 @@ Scoring: 1 (poor) – 5 (excellent). Weights reflect importance for this project
 
 ---
 
+## Decision 7. Timetable generation method
+
+**Driving requirements:** FR-25 (all hard constraints satisfied), FR-26 (weighted soft constraints), FR-29 (locked lessons), FR-30 (explain infeasibility), NFR-12 (whole university within 30 minutes), one backend developer. Literature: `03`, sections 2.2 and 2.7; numbers in brackets refer to its reference list.
+
+| Criterion | Weight | Constraint programming: Google OR-Tools CP-SAT | Mixed integer programming: PuLP + HiGHS/CBC | Own metaheuristic (simulated annealing / genetic algorithm) |
+|---|---|---|---|---|
+| Hard constraints guaranteed, modelled declaratively (no-overlap, capacity, unavailability, locked lessons) | 25% | **5** — native interval, no-overlap and Boolean constraints [17] | 5 — exact, but overlaps need many binary variables and big-M constraints | 2 — usually handled by penalties; feasibility not guaranteed [5] |
+| Soft-constraint optimisation (weighted objective) | 15% | 4 | 4 | 5 — very flexible |
+| Scalability to university size (with decomposition by faculty) | 15% | 4 — realistic university instances solved in seconds [9] | 3 — large models can be slow [7] | 4 |
+| Implementation effort for one developer | 20% | 4 — Python API, documented examples | 3 — more modelling work | 2 — algorithm, operators and parameter tuning must be built and tuned [5] |
+| Explaining infeasibility (FR-30) | 10% | 4 — infeasibility can be traced to a set of assumption literals | 3 — possible through solver-specific tools | 1 — no proof of infeasibility |
+| Licence, cost, Python ecosystem | 15% | 5 (Apache 2.0) | 4 (open source) | 4 (own code) |
+| **Weighted score** | | **4.40** | **3.80** | **2.95** |
+
+**Decision: CP-SAT.** It expresses the timetable constraints directly, guarantees the hard constraints, optimises a weighted objective for soft constraints and fits the Python backend. For the whole university the problem is decomposed by faculty, following [9]: faculties are solved one after another, and rooms and teachers already used are blocked for the next ones. A **greedy first-fit generator** is implemented as the baseline for evaluation (`09`, B-3).
+
+---
+
+## Decision 8. AI assistant: language model integration
+
+**Driving requirements:** FR-31 (constraints in natural language, KZ/RU/EN), FR-32 (explanations), FR-33 (system works without the LLM), NFR-14 (privacy). Literature: `03`, section 2.7.
+
+| Criterion | Weight | Cloud LLM API with structured (JSON-schema) output, e.g. Anthropic Claude or OpenAI GPT | Self-hosted open-weight model (e.g. via Ollama) | No LLM: rule-based parser (patterns / grammar) |
+|---|---|---|---|---|
+| Quality of structured output for Kazakh, Russian and English text | 30% | 5 | 3 (expected to be weaker for Kazakh; to be checked on the test set) | 1 (only fixed phrasings) |
+| Data privacy | 20% | 3 (data leaves the server; minimised by NFR-14) | 5 | 5 |
+| Cost | 15% | 3 (pay per request; low volume) | 4 (needs a GPU or a slow CPU run) | 5 |
+| Implementation and operation effort | 20% | 5 | 2 (model hosting, hardware) | 3 |
+| Works offline | 15% | 2 | 5 | 5 |
+| **Weighted score** | | **3.85** | **3.65** | **3.40** |
+
+**Decision: a cloud LLM API behind a provider-independent interface.** It gives the best quality for the three languages with the least effort. The provider is set in configuration, so a self-hosted model can replace it if the university requires that data stays on its servers. The LLM only returns constraints in a fixed JSON schema; the backend validates them, and the administrator confirms them (`07`, AD-8). If the LLM is disabled, forms are used instead (FR-33). The specific model will be selected at milestone M2 on the labelled test set (`09`, M-14).
+
+---
+
 ## Summary of the selected stack
 
 | Layer | Technology |
@@ -111,6 +146,8 @@ Scoring: 1 (poor) – 5 (excellent). Weights reflect importance for this project
 | Backend | Python 3.12, FastAPI, SQLAlchemy 2, Alembic, Pydantic v2 |
 | API | REST, OpenAPI 3 (Swagger UI) |
 | Auth | JWT + role-based access control |
+| Timetable generation | Google OR-Tools CP-SAT (Python), background worker |
+| AI assistant | LLM API with JSON-schema output behind a provider interface (cloud or self-hosted) |
 | Frontend | React 18, TypeScript, Vite, TanStack Query, a calendar/timetable component (e.g. FullCalendar) |
 | Testing | pytest, httpx; Vitest, React Testing Library; Playwright (E2E); k6 or Locust (load) |
 | DevOps | Docker, Docker Compose, GitHub Actions (CI: lint + tests) |
