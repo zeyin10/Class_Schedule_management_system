@@ -4,8 +4,12 @@ import {
   ApiError,
   type ApiClient,
   type ApiErrorBody,
+  type ConstraintRule,
   type Course,
+  type GenerationRun,
   type Group,
+  type LoadItem,
+  type ParseResult,
   type Room,
   type ScheduleEntry,
   type Teacher,
@@ -100,6 +104,48 @@ export function createHttpClient(baseUrl: string, getToken: () => string | null)
 
     deleteEntry(id) {
       return request<void>(`/schedule-entries/${id}`, { method: 'DELETE' })
+    },
+
+    getTeachingLoad() {
+      return request<LoadItem[]>('/teaching-load')
+    },
+
+    getConstraints() {
+      return request<ConstraintRule[]>('/constraints')
+    },
+
+    createConstraint(input) {
+      return request<ConstraintRule>('/constraints', { method: 'POST', body: JSON.stringify(input) })
+    },
+
+    deleteConstraint(id) {
+      return request<void>(`/constraints/${id}`, { method: 'DELETE' })
+    },
+
+    parseConstraint(text) {
+      return request<ParseResult>('/assistant/parse-constraint', { method: 'POST', body: JSON.stringify({ text }) })
+    },
+
+    async explainRun(runId, language) {
+      const data = await request<{ text: string }>(`/assistant/explain/${runId}`, {
+        method: 'POST',
+        body: JSON.stringify({ language }),
+      })
+      return data.text
+    },
+
+    startGeneration(params) {
+      return request<GenerationRun>('/generation-runs', { method: 'POST', body: JSON.stringify(params) })
+    },
+
+    getGenerationRun(id) {
+      return request<GenerationRun>(`/generation-runs/${id}`)
+    },
+
+    async publishRun(id) {
+      const run = await request<GenerationRun>(`/generation-runs/${id}`)
+      await request<void>(`/timetables/${run.timetable_id}/publish`, { method: 'POST' })
+      return { ...run, published: true }
     },
   }
 }

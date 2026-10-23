@@ -68,7 +68,15 @@ export function Layout() {
           {(user?.role === 'teacher' || user?.role === 'admin') && (
             <NavLink to="/rooms/free">{t('nav.freeRooms')}</NavLink>
           )}
-          {user?.role === 'admin' && <NavLink to="/admin">{t('nav.admin')}</NavLink>}
+          {user?.role === 'admin' && (
+            <>
+              <NavLink to="/admin" end>
+                {t('nav.admin')}
+              </NavLink>
+              <NavLink to="/admin/load">{t('nav.load')}</NavLink>
+              <NavLink to="/admin/generate">{t('nav.generate')}</NavLink>
+            </>
+          )}
         </nav>
       </header>
       <main className="main">

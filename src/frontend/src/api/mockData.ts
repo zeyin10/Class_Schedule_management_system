@@ -1,5 +1,5 @@
 // Synthetic demo data (no real people). The seed schedule is conflict-free.
-import type { ReferenceData, ScheduleEntry, User } from './types'
+import type { ConstraintRule, LoadItem, ReferenceData, ScheduleEntry, User } from './types'
 
 export const referenceData: ReferenceData = {
   groups: [
@@ -80,6 +80,58 @@ export function seedEntries(): ScheduleEntry[] {
     time_slot_id,
     week_pattern,
   }))
+}
+
+type LoadSeed = [number, LoadItem['lesson_type'], number, number[], number, LoadItem['week_pattern']]
+
+// Teaching load for generation (FR-23): [course, lesson type, teacher, groups, lessons per week, weeks]
+const loadSeed: LoadSeed[] = [
+  [1, 'lecture', 1, [1, 2], 1, 'every'],
+  [1, 'practice', 1, [1], 1, 'every'],
+  [1, 'practice', 1, [2], 1, 'every'],
+  [2, 'lecture', 2, [1, 2], 1, 'every'],
+  [2, 'lab', 2, [1], 1, 'odd'],
+  [2, 'lab', 2, [2], 1, 'even'],
+  [2, 'practice', 2, [3], 1, 'every'],
+  [3, 'lecture', 3, [1, 2, 3], 1, 'every'],
+  [3, 'lab', 3, [1], 1, 'every'],
+  [3, 'lab', 3, [2], 1, 'every'],
+  [4, 'lecture', 4, [3, 4], 2, 'every'],
+  [4, 'practice', 4, [3], 1, 'every'],
+  [4, 'practice', 4, [4], 1, 'even'],
+  [5, 'lecture', 5, [3, 4], 1, 'every'],
+  [5, 'practice', 5, [4], 1, 'every'],
+  [5, 'lab', 5, [3], 1, 'odd'],
+  [6, 'practice', 1, [1], 2, 'every'],
+  [6, 'practice', 1, [2], 2, 'every'],
+]
+
+export function seedLoad(): LoadItem[] {
+  return loadSeed.map(([course_id, lesson_type, teacher_id, group_ids, lessons_per_week, week_pattern], i) => ({
+    id: i + 1,
+    course_id,
+    lesson_type,
+    teacher_id,
+    group_ids,
+    lessons_per_week,
+    week_pattern,
+  }))
+}
+
+/** One rule already confirmed through the AI assistant, so the list is not empty in the demo. */
+export function seedConstraints(): ConstraintRule[] {
+  return [
+    {
+      id: 1,
+      type: 'teacher_preference',
+      kind: 'prefer',
+      teacher_id: 3,
+      weekday: null,
+      slot_ids: [1, 2, 3, 4],
+      hard: false,
+      source_text: 'Жакупова предпочитает вести занятия утром',
+    },
+  ]
 }
 
 export const DEMO_PASSWORD = 'demo123'
