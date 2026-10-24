@@ -72,7 +72,7 @@ Probability (P) and impact (I): Low / Medium / High.
 | ID | Risk | P | I | Mitigation | Owner |
 |---|---|---|---|---|---|
 | R-1 | Real schedule data is not available | M | M | Synthetic data generator based on the structure of the public schedule; document assumption A-1 | Zeyin |
-| R-2 | Difficulty finding interview participants (especially schedulers) | M | H | Contact dean's office early via supervisor; accept teachers/curators as proxies; record limitations. **Occurred for pre-defense 1:** no scheduler interviewed; two teachers and a student were interviewed and the limitation is recorded in `02`, section 6 | Both |
+| R-2 | Difficulty finding interview participants (especially schedulers) | M | H | Contact dean's office early via supervisor; accept teachers/curators as proxies; record limitations. **Occurred for pre-defense 1:** no scheduler interviewed; three teachers and a student were interviewed and the limitation is recorded in `02`, section 6 | Both |
 | R-3 | Domain complexity underestimated (subgroups, odd/even weeks, joint lectures) | M | H | Clarify in interviews; model joint lectures via `schedule_entry_group`; keep edge cases in Should/Could | Zeyin |
 | R-4 | Frontend–backend integration delays | M | M | Contract-first OpenAPI spec; mock server for frontend; weekly integration | Both |
 | R-5 | Generator does not reach a feasible timetable for the whole university in time (NFR-12) | M | H | Spike at M2; pre-checks; decomposition by faculty (AD-9); time limit with best found solution; greedy baseline as fallback; report limits honestly | Zeyin |
@@ -89,7 +89,7 @@ Probability (P) and impact (I): Low / Medium / High.
 
 | Dependency | Needed for | Status |
 |---|---|---|
-| Access to users for interviews (students, teachers, schedulers) | Evidence of relevance, usability study | Teachers and a student: done (3 interviews, `02`); scheduler: not reached, request via supervisor before M2 |
+| Access to users for interviews (students, teachers, schedulers) | Evidence of relevance, usability study | Teachers and a student: done (4 interviews, `02`); scheduler: not reached, request via supervisor before M2 |
 | Sample of the current university schedule | Data model validation, realistic test data, baseline B-4 | _TODO_ |
 | Teaching load and teacher availability data (or rules to synthesise them) | Generator development and benchmarks | _TODO_ |
 | LLM provider account / API key, or a machine for a self-hosted model | AI assistant (FR-31, FR-32) | Planned at M2 |
