@@ -61,7 +61,9 @@ YouTrack tasks (created in the [CSM project](https://zeyin.youtrack.cloud/projec
 | CSM-14 | Risk register and milestones | Nurzhaina | Medium | 2026-10-23 | This document complete |
 | CSM-15 | Supervisor review of deliverables and response to comments | Both | Critical | 2026-10-23 | Comments and actions recorded in `docs/11-supervisor-feedback.md` |
 | CSM-16 | Tag `pre-defense-1` and prepare submission summary | Both | Critical | 2026-10-24 | Tag created; summary of done work, limitations, outstanding tasks |
+| CSM-17 | Frontend prototype with mock API | Nurzhaina | High | 2026-10-22 | Key screens for student, teacher and admin work on the mock API; conflict and room warnings shown; KZ/RU/EN; tests pass (PR #1) |
 | CSM-18 | Update scope after supervisor feedback: automatic generation and AI | Zeyin | Critical | 2026-10-23 | Documents 01, 03–07, 09–11, README and diagrams consistent with generation and AI assistant; reviewed by partner |
+| CSM-19 | Frontend: teaching load, AI assistant and generation screens (mock) | Nurzhaina | High | 2026-10-23 | Admin can enter a constraint in plain language and confirm it; generate a draft, see the quality report and AI explanation, publish it; infeasible input explained; KZ/RU/EN; tests pass (PR #4) |
 
 ## 6. Risk register
 
@@ -70,7 +72,7 @@ Probability (P) and impact (I): Low / Medium / High.
 | ID | Risk | P | I | Mitigation | Owner |
 |---|---|---|---|---|---|
 | R-1 | Real schedule data is not available | M | M | Synthetic data generator based on the structure of the public schedule; document assumption A-1 | Zeyin |
-| R-2 | Difficulty finding interview participants (especially schedulers) | M | H | Contact dean's office early via supervisor; accept teachers/curators as proxies; record limitations | Both |
+| R-2 | Difficulty finding interview participants (especially schedulers) | M | H | Contact dean's office early via supervisor; accept teachers/curators as proxies; record limitations. **Occurred for pre-defense 1:** no scheduler interviewed; two teachers and a student were interviewed and the limitation is recorded in `02`, section 6 | Both |
 | R-3 | Domain complexity underestimated (subgroups, odd/even weeks, joint lectures) | M | H | Clarify in interviews; model joint lectures via `schedule_entry_group`; keep edge cases in Should/Could | Zeyin |
 | R-4 | Frontend–backend integration delays | M | M | Contract-first OpenAPI spec; mock server for frontend; weekly integration | Both |
 | R-5 | Generator does not reach a feasible timetable for the whole university in time (NFR-12) | M | H | Spike at M2; pre-checks; decomposition by faculty (AD-9); time limit with best found solution; greedy baseline as fallback; report limits honestly | Zeyin |
@@ -87,10 +89,10 @@ Probability (P) and impact (I): Low / Medium / High.
 
 | Dependency | Needed for | Status |
 |---|---|---|
-| Access to users for interviews (students, teachers, schedulers) | Evidence of relevance, usability study | _TODO_ |
+| Access to users for interviews (students, teachers, schedulers) | Evidence of relevance, usability study | Teachers and a student: done (3 interviews, `02`); scheduler: not reached, request via supervisor before M2 |
 | Sample of the current university schedule | Data model validation, realistic test data, baseline B-4 | _TODO_ |
 | Teaching load and teacher availability data (or rules to synthesise them) | Generator development and benchmarks | _TODO_ |
 | LLM provider account / API key, or a machine for a self-hosted model | AI assistant (FR-31, FR-32) | Planned at M2 |
-| Supervisor availability for checkpoint reviews | Supervisor feedback, milestone approval | _TODO_ |
-| GitHub and YouTrack access for supervisor and committee | Pre-defense assessment | _TODO_ |
+| Supervisor availability for checkpoint reviews | Supervisor feedback, milestone approval | First comment received 2026-09-30 (`11`); next review at pre-defense 1 |
+| GitHub and YouTrack access for supervisor and committee | Pre-defense assessment | GitHub: public repository; YouTrack: access to be confirmed with the supervisor |
 | OpenAPI spec (backend) → API integration (frontend) | Frontend development | Planned at M2 |
