@@ -46,11 +46,11 @@ Class schedules are usually built by hand in spreadsheets. Conflicts (the same t
 | Deliverable | Status |
 |---|---|
 | Project proposal and scope | ✅ Draft |
-| Evidence of relevance (interviews) | ✅ 3 interviews (2 teachers, 1 student); scheduler not reached yet |
+| Evidence of relevance (interviews) | ✅ 4 interviews (3 teachers, 1 student); scheduler not reached yet |
 | Literature review | ✅ Draft |
 | Existing system comparison | ✅ Draft |
 | Technology comparison | ✅ Draft |
-| Requirements and acceptance criteria | ✅ v0.3 (generation and AI from supervisor feedback, updated after interviews) |
+| Requirements and acceptance criteria | ✅ v0.4 (generation and AI from supervisor feedback, updated after interviews) |
 | Architecture diagrams | ✅ Draft |
 | UX prototype | ✅ Working React prototype on a mock API + screenshots of 11 screens; Figma planned for M2 |
 | Verification and evaluation plan | ✅ Draft |

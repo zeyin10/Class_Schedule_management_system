@@ -16,8 +16,9 @@ This document records the discussions with potential users that inform the requi
 | P1 | Teacher (asked as an expert on whether the system is feasible) | 2026-10-24 | Conversation, answer written down | Zeyin |
 | P2 | Teacher | 2026-10-24 | Written questionnaire | Team |
 | P3 | Student | 2026-10-24 | Written questionnaire | Team |
+| P4 | Teacher | 2026-10-24 | Written answers | Team |
 
-Three discussions meet the minimum of 3–5. **No schedule administrator (scheduler) took part**; this limitation is discussed in section 6.
+Four discussions meet the minimum of 3–5. **No schedule administrator (scheduler) took part**; this limitation is discussed in section 6.
 
 ## 3. Findings
 
@@ -45,28 +46,37 @@ Three discussions meet the minimum of 3–5. **No schedule administrator (schedu
 - **Uneven load:** 4–5 difficult subjects with labs in one day and only one lesson the next day.
 - **Short breaks between buildings:** hard to move quickly from one block/building to another.
 
+### P4 — Teacher
+
+- Learns the timetable **through MyDU** (the university portal).
+- **Notifications in advance are important:** when the timetable changes, "важно получить уведомление заранее, чтобы успеть скорректировать свои планы".
+- **Double bookings happen:** a room is already occupied by another group, or the academic department reports a change.
+- Teachers' wishes (days, times), their availability and room availability must be taken into account; today wishes are **passed on manually**, "что не всегда удобно".
+- Wants to write wishes as plain text, e.g. "Я не могу проводить занятия по понедельникам до 12:00", so that the system **takes them into account automatically and proposes an optimal timetable without conflicts**.
+
 ## 4. Verified findings vs. assumptions
 
 | # | Statement (hypothesis from `01`) | Status | Evidence |
 |---|---|---|---|
-| H1 | Double bookings of rooms/teachers/groups are discovered late | **Confirmed** (teacher view) | P2: rooms already occupied, overlapping lessons after moves |
-| H2 | Information about changes is fragmented and late | **Confirmed** | P2: messenger, group leaders, last moment; P3: learned about a move at the room door |
+| H1 | Double bookings of rooms/teachers/groups are discovered late | **Confirmed** (teacher view) | P2: rooms already occupied, overlapping lessons after moves; P4: room already occupied by another group |
+| H2 | Information about changes is fragmented and late | **Confirmed** | P2: messenger, group leaders, last moment; P3: learned about a move at the room door; P4: needs a notification in advance |
 | H3 | The timetable is published only as static files (PDF/Excel) | **Partly confirmed** | P2: file or portal; P3: there is already a mobile app, but updates are slow and it freezes. Our value is not "an app instead of Excel" but **up-to-date data and change marks** |
-| H4 | Teachers' wishes are hard to take into account manually | **Confirmed** | P2: wishes are often forgotten; P1: availability windows of every teacher |
+| H4 | Teachers' wishes are hard to take into account manually | **Confirmed** | P2: wishes are often forgotten; P4: wishes are passed on manually; P1: availability windows of every teacher |
 | H5 | Students mostly use phones | **Confirmed** (1 student) | P3 |
 | H6 | Gaps and uneven daily load are a problem for students | **Confirmed** | P3: 2–3 hour gaps, 4–5 difficult subjects in one day; P1: gaps are hard to avoid |
-| H7 | Users would accept constraints written in plain language | **Confirmed** (1 teacher) | P2: "идеальное решение" |
+| H7 | Users would accept constraints written in plain language | **Confirmed** (2 teachers) | P2: "идеальное решение"; P4: "Я не могу проводить занятия по понедельникам до 12:00" as the expected way to state a wish |
 | H8 | Full automatic generation can replace manual work | **Not confirmed** | P1: 80–90% automatic, the rest manual. Supports our design: generated **draft** + manual editing with conflict checks + publication |
 | N1 | Teachers and students need time to move between buildings | **New finding** | P1, P3 |
 | N2 | Difficult subjects should be early in the day and spread over the week | **New finding** | P1 (morning), P3 (not 4–5 per day) |
 | N3 | The timetable changes often during the term (illness, business trips) | **New finding** | P1 |
 | N4 | Input data from schools will be incomplete or inaccurate | **New finding** | P1 |
+| N5 | Users need to be notified about changes in advance, not only see them in the timetable | **New finding** | P4 |
 | A1 | Building the timetable takes schedulers a lot of time | **Assumption** (not verified) | No scheduler interviewed |
 | A2 | Schedulers would trust a generated draft | **Assumption** (not verified) | No scheduler interviewed; P1 expects manual correction |
 
 ## 5. Impact on requirements
 
-Requirements were updated to version 0.3 (`06`, version history):
+Requirements were updated to version 0.3 and, after interview P4, to version 0.4 (`06`, version history):
 
 | Finding | Change |
 |---|---|
@@ -77,9 +87,10 @@ Requirements were updated to version 0.3 (`06`, version history):
 | H2 late information | **FR-17** (recent changes marked for affected users) raised from S to **M**. |
 | N4 data quality | **FR-30** extended: pre-checks also report missing or inconsistent input data (teacher without availability, group without size, course without room type). |
 | H7 | FR-31 (natural-language constraints) kept as M. |
+| N5 notifications | **FR-20** (notifications about schedule changes) raised from C to **S**. |
 
 ## 6. Limitations
 
 - **No scheduler was interviewed.** The person who builds the timetable is the main user of generation, but we could not reach one before pre-defense 1. Teachers were asked instead; P1 answered as an expert on feasibility. Assumptions A1 and A2 stay unverified. Action: contact the dean's office through the supervisor before milestone M2 (risk R-2 in `10`).
-- **Small sample:** two teachers and one student from one university. The findings show the main problems but are not statistically general.
+- **Small sample:** three teachers and one student from one university. The findings show the main problems but are not statistically general.
 - Answers were given after reading the project description, which may make participants more positive about the proposed solution.
