@@ -1,10 +1,10 @@
 # Requirements Specification
 
-**Version:** 0.2 (scope updated after supervisor feedback, before interview validation)
+**Version:** 0.3 (scope from supervisor feedback, checked against the first user interviews)
 **Prioritisation:** MoSCoW — **M**ust, **S**hould, **C**ould, **W**on't (this release).
 **Traceability:** each requirement has an ID used in YouTrack tasks, tests and diagrams.
 
-> The requirements are initial. After the user interviews (`02-evidence-of-relevance.md`) they will be confirmed, re-prioritised or extended, and the change will be recorded in the version history at the end of this document.
+> Version 0.3 takes into account three interviews with two teachers and one student (`02-evidence-of-relevance.md`). No scheduler has been interviewed yet, so requirements for the administrator's work are still partly based on assumptions (`02`, section 6). Every change is recorded in the version history at the end of this document.
 
 ## 1. Actors
 
@@ -36,7 +36,7 @@
 | FR-14 | The system shall provide a documented REST API. | M | An OpenAPI 3 specification is generated and available via Swagger UI; every endpoint has request/response schemas. |
 | FR-15 | The system shall keep a change history of schedule entries (who, when, what). | S | Every create/update/delete produces an audit record; admin can view history of an entry. |
 | FR-16 | Users shall export their schedule to iCalendar (.ics). | S | The exported file imports correctly into Google Calendar and Outlook with correct times and time zone (Asia/Almaty). |
-| FR-17 | Affected users shall see recent changes to their schedule. | S | Lessons changed in the last 7 days are marked in the user's view; a "Recent changes" list is available. |
+| FR-17 | Affected users shall see recent changes to their schedule. | M | Lessons changed in the last 7 days are marked in the user's view; a "Recent changes" list is available. |
 | FR-18 | Admin shall import reference data and schedule entries from CSV/Excel. | C | A file in the documented template is imported; invalid rows are reported with line numbers; conflicting rows are not imported. |
 | FR-19 | The system shall suggest free (teacher, room, slot) combinations for a lesson being scheduled manually. | S | For a selected lesson, the system lists conflict-free options ordered by soft-constraint penalty; choosing one fills the form. |
 | FR-20 | The system shall send e-mail notifications on schedule changes. | C | Affected users receive an e-mail within 5 minutes of the change. |
@@ -50,11 +50,12 @@
 | FR-23 | Admin shall enter the teaching load for a term: course, lesson type, teacher, group(s), number of lessons per week, week pattern (every / odd / even), required room type. | M | Load items can be created, edited, imported (FR-18) and listed per group and per teacher; validation rejects unknown teachers/groups and a non-positive number of lessons. |
 | FR-24 | Admin shall enter teacher unavailability (hard) and teacher preferences (soft) by weekday and time slot. | M | Unavailable slots are never used by the generator (checked by T-GEN-02); preferences appear in the soft-constraint report. |
 | FR-25 | The system shall generate a timetable for the whole university for a term, or for a selected faculty or set of groups, that satisfies all hard constraints: no teacher, room or group overlap (with odd/even weeks); room capacity ≥ total size of the groups; room type matches lesson type; teacher unavailability; locked lessons unchanged; every load item scheduled exactly as many times as required. | M | On the reference dataset (NFR-12) the generated timetable has **0 hard-constraint violations**, confirmed by the independent Conflict Checker and by inserting it into PostgreSQL with the EXCLUDE constraints active. |
-| FR-26 | The generator shall optimise soft constraints with weights the admin can change: gaps (windows) in group timetables, teacher preferences, maximum lessons per day for a group, balanced load across the week, avoiding the last time slot. | S | A quality report lists each soft-constraint penalty; on the reference dataset the weighted penalty is lower than that of the greedy baseline B-3 (`09`, M-11). |
+| FR-26 | The generator shall optimise soft constraints with weights the admin can change: gaps (windows) in group timetables, teacher preferences, maximum lessons per day for a group, balanced load across the week, avoiding the last time slot, **difficult courses in early slots** and **at most N difficult courses per group and day** (courses have a difficulty mark set by the admin). | S | A quality report lists each soft-constraint penalty; on the reference dataset the weighted penalty is lower than that of the greedy baseline B-3 (`09`, M-11). |
 | FR-27 | The generator shall run as a background job with progress and a time limit; the result shall be saved as a **draft** timetable, separate from the published one. | M | Starting generation returns a job ID immediately; status is `queued / running / done / infeasible / failed`; the published timetable stays visible and unchanged while a draft is generated. |
 | FR-28 | Admin shall review the draft (views by group, teacher, room, quality report), edit it manually with the usual conflict checks (FR-07 – FR-09) and **publish** it. | M | After publication the draft becomes the current timetable in all views in one transaction; the previous version is kept in history. |
-| FR-29 | Admin shall lock selected lessons and regenerate the rest (partial regeneration). | S | Locked lessons keep their slot and room; the number of other changed lessons is reported (minimal perturbation, see `03`, [10]). |
-| FR-30 | When no timetable satisfies the hard constraints, the system shall explain why. | S | Pre-checks report overloaded resources (e.g. "teacher X: 22 lessons, 18 available slots", "no lab room for 60 students"); if the solver proves infeasibility, the report names the groups/teachers/rooms involved. |
+| FR-29 | Admin shall lock selected lessons and regenerate the rest (partial regeneration), e.g. when a teacher is ill or on a business trip. | M | Locked lessons keep their slot and room; the number of other changed lessons is reported (minimal perturbation, see `03`, [10]). |
+| FR-30 | When no timetable satisfies the hard constraints, the system shall explain why. | S | Pre-checks report overloaded resources (e.g. "teacher X: 22 lessons, 18 available slots", "no lab room for 60 students") and missing or inconsistent input data (teacher without availability, group without size, course without room type); if the solver proves infeasibility, the report names the groups/teachers/rooms involved. |
+| FR-34 | Consecutive lessons of a teacher or a group in different buildings shall leave a configurable transfer time. | S | Buildings have a transfer time matrix; the generator never places such lessons closer than the transfer time (hard constraint, checked by the Independent Validator); a manual edit that breaks it shows a warning. Source: interviews P1, P3 (`02`). |
 
 ### 2.2 AI assistant (LLM)
 
@@ -93,6 +94,7 @@ The generator itself is an AI search and optimisation method (constraint program
 - A-2 (assumption): A weekly recurring schedule (with optional odd/even weeks) covers the university's needs.
 - A-3 (assumption): The teaching load (who teaches what to which groups, how many lessons per week) is known before the term and can be entered or imported; the generator does not decide *who* teaches a course, only *when* and *where*.
 - A-4 (assumption): Faculties share some rooms and teachers, so a university-wide run must keep shared resources consistent across faculties.
+- A-5 (finding, `02` P1): Input data from schools will be incomplete or inaccurate, and a generated timetable will still need manual corrections (the interviewed teacher expected 80–90% of a correct timetable). The system is therefore designed as "generate a draft → correct by hand with conflict checks → publish", not as a fully automatic replacement of the scheduler.
 
 ## 5. Version history
 
@@ -100,3 +102,4 @@ The generator itself is an AI search and optimisation method (constraint program
 |---|---|---|
 | 0.1 | 2026-10-18 | Initial requirements based on the project proposal. |
 | 0.2 | 2026-10-22 | Supervisor feedback (`11-supervisor-feedback.md`, #1): automatic generation of the whole university timetable moved into scope. Added FR-23 – FR-30 (generation), FR-31 – FR-33 (AI assistant), NFR-12 – NFR-14, A-3, A-4; FR-19 raised from C to S; FR-21 now covers only exam timetabling and student sectioning. |
+| 0.3 | 2026-10-24 | Interviews with two teachers and one student (`02`): FR-17 and FR-29 raised from S to M; FR-26 extended with difficult courses in early slots and per day; FR-30 extended with input data checks; new FR-34 (transfer time between buildings); new A-5. |
