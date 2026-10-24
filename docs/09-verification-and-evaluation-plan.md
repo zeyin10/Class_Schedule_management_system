@@ -57,6 +57,7 @@ All automated tests run in **GitHub Actions** on every pull request; a PR cannot
 | T-GEN-04 | FR-29 | Lock 50% of lessons, change one teacher's availability, regenerate | Locked lessons unchanged; number of other changes reported |
 | T-GEN-05 | FR-30 | Instance where a teacher has more lessons than available slots | Status `infeasible`; report names the teacher and the numbers |
 | T-GEN-06 | NFR-13 | Run twice with the same input, seed, single worker | Identical timetables |
+| T-GEN-07 | FR-34 | Two buildings with a 20-minute transfer time and 10-minute breaks | No teacher or group has consecutive lessons in different buildings |
 | T-PERF-02 | NFR-12 | Whole-university generation on the reference dataset; one faculty | Feasible timetable ≤ 30 min (university), ≤ 5 min (faculty) |
 | T-AI-01 | FR-31 | Labelled test set (≥ 50 sentences, KZ/RU/EN) | ≥ 85% exactly correct constraints (M-14) |
 | T-AI-02 | FR-31, AD-8 | Sentences with unknown or ambiguous teacher names, or nonsense | No constraint saved without confirmation; unknown names reported, never guessed |
@@ -82,6 +83,7 @@ All automated tests run in **GitHub Actions** on every pull request; a PR cannot
 | M-14 | AI parser accuracy | Exactly correct constraints / sentences in the labelled test set, per language | ≥ 85% | — |
 | M-15 | Time to build a timetable | Hours to obtain a publishable timetable for a test faculty: with the system vs. the scheduler's estimate or record for the manual process | Much shorter than baseline (reported, no fixed target before interviews) | B-1 |
 | M-16 | Time to enter constraints | Seconds to enter 10 typical wishes with the assistant vs. forms | Faster with the assistant | B-5 |
+| M-17 | Manual correction after generation | Share of lessons the administrator moves by hand before publishing a generated draft (test faculty) | Reported; an interviewed teacher expects 10–20% (`02`, P1), we aim for less | — |
 
 ## 5. Measurement conditions
 
