@@ -1,10 +1,10 @@
 # Requirements Specification
 
-**Version:** 0.3 (scope from supervisor feedback, checked against the first user interviews)
+**Version:** 0.4 (scope from supervisor feedback, checked against four user interviews)
 **Prioritisation:** MoSCoW — **M**ust, **S**hould, **C**ould, **W**on't (this release).
 **Traceability:** each requirement has an ID used in YouTrack tasks, tests and diagrams.
 
-> Version 0.3 takes into account three interviews with two teachers and one student (`02-evidence-of-relevance.md`). No scheduler has been interviewed yet, so requirements for the administrator's work are still partly based on assumptions (`02`, section 6). Every change is recorded in the version history at the end of this document.
+> Version 0.4 takes into account four interviews with three teachers and one student (`02-evidence-of-relevance.md`). No scheduler has been interviewed yet, so requirements for the administrator's work are still partly based on assumptions (`02`, section 6). Every change is recorded in the version history at the end of this document.
 
 ## 1. Actors
 
@@ -39,7 +39,7 @@
 | FR-17 | Affected users shall see recent changes to their schedule. | M | Lessons changed in the last 7 days are marked in the user's view; a "Recent changes" list is available. |
 | FR-18 | Admin shall import reference data and schedule entries from CSV/Excel. | C | A file in the documented template is imported; invalid rows are reported with line numbers; conflicting rows are not imported. |
 | FR-19 | The system shall suggest free (teacher, room, slot) combinations for a lesson being scheduled manually. | S | For a selected lesson, the system lists conflict-free options ordered by soft-constraint penalty; choosing one fills the form. |
-| FR-20 | The system shall send e-mail notifications on schedule changes. | C | Affected users receive an e-mail within 5 minutes of the change. |
+| FR-20 | The system shall send e-mail notifications on schedule changes. | S | Affected users receive an e-mail within 5 minutes of the change. Source: interview P4 (`02`). |
 | FR-21 | Exam timetabling and individual student sectioning. | W | — (out of scope) |
 | FR-22 | Native mobile applications. | W | — (out of scope; replaced by responsive UI) |
 
@@ -103,3 +103,4 @@ The generator itself is an AI search and optimisation method (constraint program
 | 0.1 | 2026-10-18 | Initial requirements based on the project proposal. |
 | 0.2 | 2026-10-22 | Supervisor feedback (`11-supervisor-feedback.md`, #1): automatic generation of the whole university timetable moved into scope. Added FR-23 – FR-30 (generation), FR-31 – FR-33 (AI assistant), NFR-12 – NFR-14, A-3, A-4; FR-19 raised from C to S; FR-21 now covers only exam timetabling and student sectioning. |
 | 0.3 | 2026-10-24 | Interviews with two teachers and one student (`02`): FR-17 and FR-29 raised from S to M; FR-26 extended with difficult courses in early slots and per day; FR-30 extended with input data checks; new FR-34 (transfer time between buildings); new A-5. |
+| 0.4 | 2026-10-24 | Interview P4 (teacher): FR-20 (notifications about changes) raised from C to S. |
