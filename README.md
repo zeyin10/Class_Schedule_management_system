@@ -6,7 +6,7 @@ A web-based system for managing university class schedules. It **generates the u
 
 ## Problem
 
-Class schedules are often built by hand in spreadsheets and published as static PDF/Excel files. Building a timetable for the whole university takes schedulers a lot of time, and conflicts (the same teacher, room or group booked twice) are discovered late, changes are communicated informally, and students and teachers cannot easily search for their lessons or free rooms. See [Project proposal](docs/01-project-proposal.md).
+Class schedules are usually built by hand in spreadsheets. Conflicts (the same teacher, room or group booked twice) are discovered late, changes reach teachers and students through messengers at the last moment, teachers' wishes are often forgotten, and students get long gaps and uneven days. Our interviews with teachers and a student confirmed these problems; an interviewed teacher expects automatic generation to produce 80–90% of a correct timetable, with the rest corrected by hand — which is how the system is designed. See [Project proposal](docs/01-project-proposal.md) and [Evidence of relevance](docs/02-evidence-of-relevance.md).
 
 ## Target users
 
@@ -28,8 +28,8 @@ Class schedules are often built by hand in spreadsheets and published as static 
 
 | Member | Role | Responsibilities |
 |---|---|---|
-| Zeyin Abdikassym | Backend Developer (Database and API) | Data model, PostgreSQL schema and constraints, FastAPI services, RBAC, API specification, backend and performance tests |
-| Nurzhaina Kuralbay | Frontend Developer (UI/UX) | User scenarios, Figma prototype, React application, API integration, E2E and usability tests |
+| Zeyin Abdikassym | Backend Developer (Database and API) | Data model, PostgreSQL schema and constraints, FastAPI services, timetable generator (CP-SAT), LLM constraint assistant, RBAC, API specification, backend and performance tests |
+| Nurzhaina Kuralbay | Frontend Developer (UI/UX) | User scenarios, UX prototype, React application (schedule views, admin editor, teaching load, AI assistant, generation and draft review), API integration, E2E and usability tests |
 
 **Supervisor:** Toleu Altynbek
 
@@ -46,17 +46,17 @@ Class schedules are often built by hand in spreadsheets and published as static 
 | Deliverable | Status |
 |---|---|
 | Project proposal and scope | ✅ Draft |
-| Evidence of relevance (interviews) | ⏳ In progress |
+| Evidence of relevance (interviews) | ✅ 3 interviews (2 teachers, 1 student); scheduler not reached yet |
 | Literature review | ✅ Draft |
 | Existing system comparison | ✅ Draft |
 | Technology comparison | ✅ Draft |
-| Requirements and acceptance criteria | ✅ v0.2 (generation and AI added after supervisor feedback) |
+| Requirements and acceptance criteria | ✅ v0.3 (generation and AI from supervisor feedback, updated after interviews) |
 | Architecture diagrams | ✅ Draft |
-| UX prototype | ⏳ In progress |
+| UX prototype | ✅ Working React prototype on a mock API + screenshots of 11 screens; Figma planned for M2 |
 | Verification and evaluation plan | ✅ Draft |
 | Project management and risks | ✅ Draft |
 | Supervisor feedback | 🟡 First comment recorded and addressed |
-| Implementation | ⬜ Not started (planned from M2) |
+| Implementation | 🟡 Frontend prototype (mock API, 43 tests); backend, CP-SAT generator and LLM assistant from M2 |
 
 ## Technologies
 
@@ -79,7 +79,7 @@ Justification: [Technology comparison](docs/05-technology-comparison.md).
 
 - **GitHub:** https://github.com/zeyin10/Class_Schedule_management_system
 - **YouTrack:** https://zeyin.youtrack.cloud/projects/CSM
-- **Figma prototype:** _TODO_
+- **Prototype:** working React application in [`src/frontend`](src/frontend) (run it as shown below) and screens in [UX / prototype](docs/08-ux-prototype.md); Figma mockups are planned for milestone M2
 
 ## Documentation
 
@@ -106,17 +106,33 @@ Justification: [Technology comparison](docs/05-technology-comparison.md).
 │   └── export/      # PNG / SVG exports
 ├── src/
 │   ├── backend/     # FastAPI application (planned)
-│   └── frontend/    # React application (planned)
+│   └── frontend/    # React prototype on a mock API (KZ/RU/EN)
 ├── tests/
-│   ├── backend/
-│   └── frontend/
+│   ├── backend/     # (planned)
+│   └── frontend/    # Test description; tests live next to the code in src/frontend
 ├── config/          # Configuration examples (no real secrets)
 └── README.md
 ```
 
 ## Setup, run and test
 
-Runnable code is not available yet (analysis and design stage). Instructions will be added here once the backend and frontend skeletons are created (milestone M2). Planned:
+### Frontend prototype (available now)
+
+Requirements: Node.js 18 or newer (LTS).
+
+```bash
+cd src/frontend
+npm install
+npm run dev        # http://localhost:5173
+npm test           # 43 unit and component tests (Vitest + React Testing Library)
+npm run build      # type check + production build
+```
+
+Demo accounts (password `demo123`): `student@demo.kz`, `teacher@demo.kz`, `admin@demo.kz`. All data is synthetic.
+
+The prototype runs on an in-browser **mock API** with the same REST contract as the planned backend. In the mock, timetable generation uses a simple greedy algorithm and the AI assistant is a keyword matcher; the real system will use the CP-SAT generator and an LLM on the backend (milestone M2). See [UX / prototype](docs/08-ux-prototype.md), section 4.
+
+### Full system (planned, milestone M2)
 
 ```bash
 cp config/.env.example .env
